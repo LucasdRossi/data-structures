@@ -38,7 +38,7 @@ public:
   bool rule(int current, int toInsert);
   void insert(int value, Node *node = nullptr, bool getRoot = true);
   void remove(int value, Node *node = nullptr);
-  // int getHeight(Node *node = nullptr, bool getRoot = true);
+  int getHeight(Node *node = nullptr, bool getRoot = true, int current = 0);
 };
 
 Node *Tree::getRoot()
@@ -46,7 +46,6 @@ Node *Tree::getRoot()
   return this->root;
 }
 
-//TODO limit to the tree height
 Node *Tree::getOne(int value, Node *node, bool getRoot)
 {
   if (getRoot)
@@ -60,10 +59,14 @@ Node *Tree::getOne(int value, Node *node, bool getRoot)
   {
     if (this->rule(node->value, value))
     {
+      if (!node->left)
+        return nullptr;
       this->getOne(value, node->left, false);
     }
     else
     {
+      if (!node->right)
+        return nullptr;
       this->getOne(value, node->right, false);
     }
   }
@@ -186,20 +189,49 @@ void Tree::remove(int value, Node *node)
   }
   else
   {
-    Node *aux = node->right;
+    Node *aux = node->left;
     while (aux->right)
     {
-      cout << "alo";
       aux = aux->right;
     }
+
+    int nodeValue = node->value;
     node->value = aux->value;
-    aux->value = value;
-    this->remove(aux->value);
+    aux->value = nodeValue;
+
+    this->remove(0, aux);
   }
 }
 
-// int Tree::getHeight(Node *node, bool getRoot)
-// {
-//   if (getRoot)
-//     node = this->getRoot();
-// }
+int Tree::getHeight(Node *node, bool getRoot, int current)
+{
+  if (getRoot)
+    node = this->getRoot();
+
+  if (!node->right && !node->left)
+  {
+    current += 1;
+  }
+  else if (!node->left)
+  {
+    current += 1;
+    current += this->getHeight(node->right, false);
+  }
+  else if (!node->right)
+  {
+    current += 1;
+    current += this->getHeight(node->left, false);
+  }
+  else
+  {
+    current += 1;
+    int totalLeft = this->getHeight(node->left, false);
+    int totalRight = this->getHeight(node->right, false);
+
+    if (totalLeft > totalRight)
+      current += totalLeft;
+    else
+      current += totalRight;
+  }
+  return current;
+}
