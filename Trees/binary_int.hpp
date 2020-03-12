@@ -21,8 +21,7 @@ struct Node
 class Tree
 {
 private:
-  // types => 0 - >= left && 1 - <= right
-  int type;
+    int type;
   Node *root;
 
 public:
@@ -34,11 +33,18 @@ public:
 
   Node *getRoot();
   Node *getOne(int value, Node *node = nullptr, bool getRoot = true);
+
   string toText(int type = 0, Node *node = nullptr, bool getRoot = true, string current = "");
+
   bool rule(int current, int toInsert);
+
   void insert(int value, Node *node = nullptr, bool getRoot = true);
+  void insertArray(int *values);
   void remove(int value, Node *node = nullptr);
-  int getHeight(Node *node = nullptr, bool getRoot = true, int current = 0);
+  void deleteTree(Node *node = nullptr, bool getRoot = true);
+
+  int getTreeHeight(Node *node = nullptr, bool getRoot = true, int current = 0);
+  int getLevel(int value, int cont = 1, Node *node = nullptr, bool getRoot = true);
 };
 
 Node *Tree::getRoot()
@@ -161,6 +167,15 @@ void Tree::insert(int value, Node *node, bool getRoot)
   }
 }
 
+void Tree::insertArray(int *values)
+{
+  int lenght = sizeof(values) / sizeof(values[0]) * 2;
+  for (int i = 0; i < lenght; i++)
+  {
+    this->insert(values[i]);
+  }
+}
+
 void Tree::remove(int value, Node *node)
 {
   if (!node)
@@ -203,30 +218,50 @@ void Tree::remove(int value, Node *node)
   }
 }
 
-int Tree::getHeight(Node *node, bool getRoot, int current)
+void Tree::deleteTree(Node *node, bool getRoot)
 {
   if (getRoot)
     node = this->getRoot();
 
+  if (node)
+  {
+    if (node->left)
+      this->deleteTree(node->left, false);
+    if (node->right)
+      this->deleteTree(node->right, false);
+
+    this->remove(0, node);
+  }
+}
+
+int Tree::getTreeHeight(Node *node, bool getRoot, int current)
+{
+  if (getRoot)
+  {
+    node = this->getRoot();
+    if (node->isEmpty || !node)
+    {
+      return -1;
+    }
+  }
+
+  current += 1;
   if (!node->right && !node->left)
   {
-    current += 1;
+    ;
   }
   else if (!node->left)
   {
-    current += 1;
-    current += this->getHeight(node->right, false);
+    current += this->getTreeHeight(node->right, false);
   }
   else if (!node->right)
   {
-    current += 1;
-    current += this->getHeight(node->left, false);
+    current += this->getTreeHeight(node->left, false);
   }
   else
   {
-    current += 1;
-    int totalLeft = this->getHeight(node->left, false);
-    int totalRight = this->getHeight(node->right, false);
+    int totalLeft = this->getTreeHeight(node->left, false);
+    int totalRight = this->getTreeHeight(node->right, false);
 
     if (totalLeft > totalRight)
       current += totalLeft;
@@ -234,4 +269,31 @@ int Tree::getHeight(Node *node, bool getRoot, int current)
       current += totalRight;
   }
   return current;
+}
+
+int Tree::getLevel(int value, int cont, Node *node, bool getRoot)
+{
+  if (getRoot)
+    node = this->getRoot();
+
+  if (node->value == value)
+  {
+    return cont;
+  }
+  else
+  {
+    cont += 1;
+    if (this->rule(node->value, value))
+    {
+      if (!node->left)
+        return -1;
+      this->getLevel(value, cont, node->left, false);
+    }
+    else
+    {
+      if (!node->right)
+        return -1;
+      this->getLevel(value, cont, node->right, false);
+    }
+  }
 }
