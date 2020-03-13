@@ -1,8 +1,5 @@
-#include <cstddef>
 #include <string>
-#include <cstring>
-
-using namespace std;
+#include <cstring> // to_string
 
 struct Node
 {
@@ -21,7 +18,7 @@ struct Node
 class Tree
 {
 private:
-    int type;
+  int type;
   Node *root;
 
 public:
@@ -34,12 +31,12 @@ public:
   Node *getRoot();
   Node *getOne(int value, Node *node = nullptr, bool getRoot = true);
 
-  string toText(int type = 0, Node *node = nullptr, bool getRoot = true, string current = "");
+  std::string toText(int type = 0, Node *node = nullptr, bool getRoot = true, std::string current = "");
 
   bool rule(int current, int toInsert);
 
   void insert(int value, Node *node = nullptr, bool getRoot = true);
-  void insertArray(int *values);
+  void insertArray(int *values, int size);
   void remove(int value, Node *node = nullptr);
   void deleteTree(Node *node = nullptr, bool getRoot = true);
 
@@ -78,7 +75,7 @@ Node *Tree::getOne(int value, Node *node, bool getRoot)
   }
 }
 
-string Tree::toText(int type, Node *node, bool getRoot, string current)
+std::string Tree::toText(int type, Node *node, bool getRoot, std::string current)
 {
   if (getRoot)
     node = this->getRoot();
@@ -89,21 +86,18 @@ string Tree::toText(int type, Node *node, bool getRoot, string current)
     switch (type)
     {
     case 0:
-      // <root<left><right>>
-      current += to_string(node->value);
+      current += std::to_string(node->value);
       current += this->toText(type, node->left, false);
       current += this->toText(type, node->right, false);
       break;
     case 1:
-      // <root<right><left>>
-      current += to_string(node->value);
+      current += std::to_string(node->value);
       current += this->toText(type, node->right, false);
       current += this->toText(type, node->left, false);
       break;
     case 2:
-      // <<left>root<right>>
       current += this->toText(type, node->left, false);
-      current += to_string(node->value);
+      current += std::to_string(node->value);
       current += this->toText(type, node->right, false);
       break;
     default:
@@ -167,10 +161,9 @@ void Tree::insert(int value, Node *node, bool getRoot)
   }
 }
 
-void Tree::insertArray(int *values)
+void Tree::insertArray(int *values, int size)
 {
-  int lenght = sizeof(values) / sizeof(values[0]) * 2;
-  for (int i = 0; i < lenght; i++)
+  for (int i = 0; i < size; i++)
   {
     this->insert(values[i]);
   }

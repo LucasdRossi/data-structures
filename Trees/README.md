@@ -5,9 +5,9 @@
 <details>
 <summary>code sample</summary>
 
-```cpp
+```c++
 #include <iostream>
-#include "binary_int.hpp"
+#include "Trees/binary_int.hpp"
 int main()
 {
   // types => 0 - >= left || 1 - <= right
@@ -15,26 +15,26 @@ int main()
 
   int values[4] = {20, 10, 30, 15};
 
-  tree->insertArray(values);
+  tree->insertArray(values, 4);
 
   // inserting 25:
   tree->insert(25);
 
   //text 0:
-  cout << tree->toText() << endl;
+  std::cout << tree->toText() << std::endl; // <root<left><right>>
   //text 1:
-  cout << tree->toText(1) << endl;
+  std::cout << tree->toText(1) << std::endl; // <root<right><left>>
   //text 2:
-  cout << tree->toText(2) << endl;
+  std::cout << tree->toText(2) << std::endl; // <<left>root<right>>
 
   //level of 15:
-  cout << tree->getLevel(15) << endl;
+  std::cout << tree->getLevel(15) << std::endl;
 
   //element 10:
   Node *ten = tree->getOne(10);
 
   //tree height:
-  cout << tree->getTreeHeight() << endl;
+  std::cout << tree->getTreeHeight() << std::endl;
 
   //removing 20:
   tree->remove(20);
