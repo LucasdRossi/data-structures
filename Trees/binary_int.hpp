@@ -139,8 +139,6 @@ std::string Tree::getDraw()
     for (int i = 0; i < this->size; i++)
     {
       draw += this->currentDraw[i];
-      if (this->currentDraw[i] == "")
-        draw += "a";
     }
   }
   return draw;
@@ -163,7 +161,7 @@ void Tree::setDraw(Node *node, bool getRoot)
   if (getRoot)
   {
     // TODO corrigir o bug do 6
-    int c = (this->sequence[1] * 4) + this->valueLength;
+    int c = (this->sequence[0] * 4) + this->valueLength;
     int l, i = 0, cont = 0;
     while (true)
     {
@@ -180,90 +178,71 @@ void Tree::setDraw(Node *node, bool getRoot)
     this->lines = l;
     this->columns = c;
     this->currentDraw = new std::string[this->size];
+    // for (int i = 0; i < this->size; i++)
+    //   this->currentDraw[i] = std::to_string(i);
+    for (l = 0; l < this->lines; l++)
+    {
+      if (l == 0)
+        this->currentDraw[c - 1] = "\n";
+      else
+        this->currentDraw[(c * l) - 1] = "\n";
+    }
     node = this->getRoot();
   }
   int level = this->getLevel(node->value);
 
-  int i = 0, j;
-  for (j = 0; j < this->sequence[level] - 1; j++)
+  int i = 1, j;
+  for (j = 1; j < this->sequence[level - 1]; j++)
   {
     this->currentDraw[i * level] = ".";
-
     this->currentDraw[(i * level) + this->columns] = ".";
     i++;
   }
 
-  if (node->left && !node->left->isEmpty)
-  {
-    this->currentDraw[i * level] = "+";
+  this->currentDraw[i * level] = "+";
+  if (!node->left || !node->left->isEmpty)
     this->currentDraw[(i * level) + this->columns] = "|";
-  }
   else
-  {
-    this->currentDraw[i * level] = ".";
     this->currentDraw[(i * level) + this->columns] = ".";
-  }
   i++;
 
-  for (j = 0; j <= this->sequence[level - 1]; j++)
+  for (j = 1; j <= this->sequence[level - 1]; j++)
   {
-    this->currentDraw[(i * level) + this->columns + j] = ".";
-  }
-
-  for (j = 0; j < this->sequence[level]; j++)
-  {
-    if (node->left && !node->left->isEmpty)
-      this->currentDraw[i * level] = "-";
-    else
-      this->currentDraw[i * level] = ".";
-    i++;
-  }
-  std::string aux = "", value = std::to_string(node->value);
-  if (value.length() < this->valueLength)
-  {
-    for (j = 0; j < this->valueLength - value.length(); j++)
-    {
-      aux += "0";
-    }
-  }
-  value = aux + value;
-
-  for (j = 0; j < this->valueLength; j++)
-  {
-    this->currentDraw[i * level] = value[j];
-    i++;
-  }
-
-  for (j = 0; j < this->sequence[level]; j++)
-  {
-    if (node->right && !node->right->isEmpty)
-      this->currentDraw[i * level] = "-";
-    else
-      this->currentDraw[i * level] = ".";
-    i++;
-  }
-
-  if (node->right && !node->right->isEmpty)
-  {
-    this->currentDraw[i * level] = "+";
-    this->currentDraw[(i * level) + this->columns] = "|";
-  }
-  else
-  {
-    this->currentDraw[i * level] = ".";
+    this->currentDraw[i * level] = "-";
     this->currentDraw[(i * level) + this->columns] = ".";
+    i++;
   }
+  this->currentDraw[i * level] = std::to_string(node->value);
+  this->currentDraw[(i * level) + this->columns] = ".";
   i++;
 
-  for (j = 0; j < this->sequence[level] - 1; j++)
+  this->currentDraw[(i * level) + this->columns] = ".";
+  this->currentDraw[(i * level) + this->columns + 1] = ".";
+
+  for (j = 1; j <= this->sequence[level - 1]; j++)
+  {
+    this->currentDraw[i * level] = "-";
+    // TODO trar esse +1 com o valueLength
+    this->currentDraw[(i * level) + this->columns + 1] = ".";
+    i++;
+  }
+
+  this->currentDraw[i * level] = "+";
+  if (!node->right || !node->right->isEmpty)
+    this->currentDraw[(i * level) + this->columns + 1] = "|";
+  else
+    this->currentDraw[(i * level) + this->columns + 1] = ".";
+  i++;
+
+  for (j = 1; j < this->sequence[level - 1]; j++)
   {
     this->currentDraw[i * level] = ".";
-    this->currentDraw[(i * level) + this->columns] = ".";
+    this->currentDraw[(i * level) + this->columns + 1] = ".";
     i++;
   }
 
   this->currentDraw[i * level] = "\n";
-  this->currentDraw[(i * level) + this->columns] = "\n";
+  this->currentDraw[(i * level) + this->columns + 1] = "\n";
 }
 
 void Tree::insert(int value, Node *node, bool getRoot)
@@ -386,21 +365,20 @@ void Tree::setSequence()
   this->height = this->getTreeHeight();
   if (this->height != -1)
   {
-    int h = this->height + 1;
-    int *sequence = new int[h];
+    int *sequence = new int[this->height];
     sequence[0] = 0;
-    for (int i = 1; i < h; i++)
+    for (int i = 1; i < this->height; i++)
     {
       sequence[i] = sequence[i - 1] + sequence[i - 1] + 1;
     }
     int aux;
-    for (int i = h - 1, j = 0; i >= h / 2; i--, j++)
+    for (int i = this->height - 1, j = 0; i >= this->height / 2; i--, j++)
     {
       aux = sequence[j];
       sequence[j] = sequence[i];
       sequence[i] = aux;
     }
-    this->sequence = new int[h];
+    this->sequence = new int[this->height];
     this->sequence = sequence;
   }
 }
