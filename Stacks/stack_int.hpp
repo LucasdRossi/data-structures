@@ -43,8 +43,8 @@ bool Stack::pop()
     return false;
 
   this->size -= 1;
-  delete this->top;
   this->top = this->top->prev;
+  return true;
 }
 
 bool Stack::push(int value)
@@ -86,7 +86,7 @@ Node *Stack::peek()
 std::string Stack::toText()
 {
   if (this->isEmpty())
-    return "the stack is empty";
+    return "Stack is empty";
 
   Node *node = this->top;
   std::string current = "<- | ";

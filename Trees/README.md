@@ -1,8 +1,10 @@
-# Trees
+# Trees :deciduous_tree:
+
+> Hierarchical tree structure, with a root value and subtrees of children with a parent node, represented as a set of linked nodes.
 
 ## Binary INT
 
-<details>
+<details open>
 <summary>code sample</summary>
 
 ```c++
