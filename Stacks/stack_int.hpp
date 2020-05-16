@@ -89,7 +89,7 @@ std::string Stack::toText()
     return "Stack is empty";
 
   Node *node = this->top;
-  std::string current = "<- | ";
+  std::string current = "-> | ";
 
   while (node)
   {

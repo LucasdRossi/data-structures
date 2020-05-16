@@ -27,6 +27,10 @@ public:
     this->type = type;
     this->root = new Node;
   }
+  ~Tree()
+  {
+    this->deleteTree();
+  }
 
   Node *getRoot();
   Node *getOne(int value, Node *node = nullptr, bool getRoot = true);
